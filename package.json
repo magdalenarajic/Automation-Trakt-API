@@ -1,0 +1,28 @@
+{
+  "name": "trakt-api",
+  "version": "1.0.0",
+  "description": "Automation Trakt API with Cypress",
+  "main": "index.js",
+  "scripts": {
+    "cy:run": "cypress run",
+		"cy:open": "cypress open",
+    "cy:run-dashboard": "cypress run --record --key dfb140ed-d349-46da-b2ad-5e9a3f8aa21e",
+    "cy:update-snapshots": "cypress run --env updateSnapshots=true",
+    "cy:run-with-reporter": "cypress run --reporter cypress-image-snapshot/reporter"
+  },
+  "keywords": [
+    "cypress",
+    "trakt",
+    "testing",
+    "api"
+  ],
+  "author": "Magdalena",
+  "license": "ISC",
+  "devDependencies": {
+    "cypress": "^9.5.2"
+  },
+  "dependencies": {
+    "cypress-image-snapshot": "^4.0.1",
+    "prettier": "^2.6.0"
+  }
+}
