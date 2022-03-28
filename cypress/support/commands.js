@@ -36,4 +36,159 @@ Cypress.Commands.add('verifyCode',(code, verificationUrl)=>{
     cy.get('#auth-form-wrapper').should('be.visible')
 	cy.get('input[name="commit"]').contains('Yes').click();
 	cy.contains('Woohoo!').should('be.visible');
-})
+});
+
+Cypress.Commands.add('getAccessToken', () => {
+	cy.request({
+		method: 'POST',
+		url: 'https://api.trakt.tv/oauth/device/code',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+        failOnStatusCode: false,
+		body: {
+			client_id: Cypress.env('client_id'),
+		},
+	}).then($response => {
+		expect($response.status).to.be.eq(200);
+		expect($response.body).to.have.property('user_code');
+        expect($response.body).to.have.property('device_code');
+		expect($response.body).to.have.property('verification_url');
+		expect($response.body).to.have.property('expires_in');
+		expect($response.body).to.have.property('interval');
+
+		cy.verifyCode(
+			$response.body.user_code,
+			$response.body.verification_url
+		).then(() => {
+			cy.request({
+				method: 'POST',
+				url: 'https://api.trakt.tv/oauth/device/token',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: {
+					code: $response.body.device_code,
+					client_id: Cypress.env('client_id'),
+					client_secret: Cypress.env('client_secret'),
+				},
+			}).then($tokenResponse => {
+				expect($tokenResponse.status).to.be.eq(200);
+				expect($tokenResponse.body).to.have.property('access_token');
+				expect($tokenResponse.body).to.have.property('refresh_token');
+
+				Cypress.env('access_token', $tokenResponse.body.access_token);
+				Cypress.env('refresh_token', $tokenResponse.body.refresh_token);
+			});
+		});
+	});
+});
+
+Cypress.Commands.add('createUserList', (name, privacy) => {
+	cy.request({
+		method: 'POST',
+		url: `https://api.trakt.tv/users/${Cypress.env('user').username}/lists`,
+		headers: {
+			'X-Ratelimit': {
+				"name":"UNAUTHED_API_GET_LIMIT",
+				"period":300,
+				"limit":2000
+			},
+			'Retry-After': 60,
+			'Content-Type': 'application/json',
+			Authorization: `Bearer ${Cypress.env('access_token')}`,
+			'trakt-api-version': Cypress.env('trakt_api_version'),
+			'trakt-api-key': Cypress.env('client_id'),
+		},
+		body: {
+			name: name,
+			description: 'Some description for list',
+			privacy: privacy,
+			display_numbers: true,
+			allow_comments: true,
+			sort_by: 'rank',
+			sort_how: 'asc',
+		},
+		failOnStatusCode: false,
+	}).then($response => {
+        expect($response.status).to.be.eq(201);
+        expect($response.body.ids.slug).to.include(name.toLowerCase().replace(/\s+/g, '-'));		
+	});
+});
+
+Cypress.Commands.add('deleteAllLists', () => {
+	cy.request({
+		method: 'GET',
+		url: `https://api.trakt.tv/users/mrajic/lists`,
+		headers: {
+			'X-Ratelimit': {
+				"name":"UNAUTHED_API_GET_LIMIT",
+				"period":300,
+				"limit":2000
+			},
+			'Retry-After': 60,
+			'Content-Type': 'application/json',
+			Authorization: `Bearer ${Cypress.env('access_token')}`,
+			'trakt-api-version': Cypress.env('trakt_api_version'),
+			'trakt-api-key': Cypress.env('client_id'),
+		},
+		failOnStatusCode: false,
+	}).then($userCustomList => {
+		const lists = Cypress.$.makeArray($userCustomList.body);
+
+		lists.forEach($list => {
+			cy.request({
+				method: 'DELETE',
+				url: `https://api.trakt.tv/users/${
+					Cypress.env('user').username
+				}/lists/${$list.ids.slug}`,
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${Cypress.env('access_token')}`,
+					'trakt-api-version': Cypress.env('trakt_api_version'),
+					'trakt-api-key': Cypress.env('client_id'),
+				},
+				failOnStatusCode: false,
+			}).then($response => {
+				expect($response.status).to.be.gt(200);
+			});
+		});
+	});
+});
+
+Cypress.Commands.add('deleteAnyActiveCheckins',()=>{
+	cy.request({
+		method: 'DELETE',
+		url: `https://api.trakt.tv/checkin`,
+		headers: {
+			'Content-Type': 'application/json',
+			Authorization: `Bearer ${Cypress.env('access_token')}`,
+			'trakt-api-version': Cypress.env('trakt_api_version'),
+			'trakt-api-key': Cypress.env('client_id'),
+		},
+		failOnStatusCode: false,
+	}).then($response => {
+		expect($response.status).to.be.eq(204);
+	});
+
+});
+
+Cypress.Commands.add('deleteComment',id=>{
+	cy.request({
+		method: 'DELETE',
+		url: `https://api.trakt.tv/comments/${id}`,
+		headers: {
+			'Content-Type': 'application/json',
+			Authorization: `Bearer ${Cypress.env('access_token')}`,
+			'trakt-api-version': Cypress.env('trakt_api_version'),
+		  'trakt-api-key': Cypress.env('client_id'),
+		},
+		failOnStatusCode: false,
+	  }).then($response =>{
+		expect($response.status).to.be.eq(204)
+	  });
+	});
+
+
+
+
