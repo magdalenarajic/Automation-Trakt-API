@@ -24,19 +24,19 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
-Cypress.Commands.add('verifyCode',(code, verificationUrl)=>{
-    cy.visit(`https://trakt.tv/auth/signin`);
-    cy.get('#user_login').type(Cypress.env('user').username);
-    cy.get('#user_password').type(Cypress.env('user').password);
-    cy.contains('Sign in').click();
+Cypress.Commands.add('verifyCode', (code, verificationUrl) => {
+	cy.visit(`https://trakt.tv/auth/signin`)
+	cy.get('#user_login').type(Cypress.env('user').username)
+	cy.get('#user_password').type(Cypress.env('user').password)
+	cy.contains('Sign in').click()
 
-    cy.visit(verificationUrl);
-	cy.get('#code').type(code);
-	cy.contains('Continue').click();
-    cy.get('#auth-form-wrapper').should('be.visible')
-	cy.get('input[name="commit"]').contains('Yes').click();
-	cy.contains('Woohoo!').should('be.visible');
-});
+	cy.visit(verificationUrl)
+	cy.get('#code').type(code)
+	cy.contains('Continue').click()
+	cy.get('#auth-form-wrapper').should('be.visible')
+	cy.get('input[name="commit"]').contains('Yes').click()
+	cy.contains('Woohoo!').should('be.visible')
+})
 
 Cypress.Commands.add('getAccessToken', () => {
 	cy.request({
@@ -45,17 +45,17 @@ Cypress.Commands.add('getAccessToken', () => {
 		headers: {
 			'Content-Type': 'application/json',
 		},
-        failOnStatusCode: false,
+		failOnStatusCode: false,
 		body: {
 			client_id: Cypress.env('client_id'),
 		},
 	}).then($response => {
-		expect($response.status).to.be.eq(200);
-		expect($response.body).to.have.property('user_code');
-        expect($response.body).to.have.property('device_code');
-		expect($response.body).to.have.property('verification_url');
-		expect($response.body).to.have.property('expires_in');
-		expect($response.body).to.have.property('interval');
+		expect($response.status).to.be.eq(200)
+		expect($response.body).to.have.property('user_code')
+		expect($response.body).to.have.property('device_code')
+		expect($response.body).to.have.property('verification_url')
+		expect($response.body).to.have.property('expires_in')
+		expect($response.body).to.have.property('interval')
 
 		cy.verifyCode(
 			$response.body.user_code,
@@ -73,16 +73,16 @@ Cypress.Commands.add('getAccessToken', () => {
 					client_secret: Cypress.env('client_secret'),
 				},
 			}).then($tokenResponse => {
-				expect($tokenResponse.status).to.be.eq(200);
-				expect($tokenResponse.body).to.have.property('access_token');
-				expect($tokenResponse.body).to.have.property('refresh_token');
+				expect($tokenResponse.status).to.be.eq(200)
+				expect($tokenResponse.body).to.have.property('access_token')
+				expect($tokenResponse.body).to.have.property('refresh_token')
 
-				Cypress.env('access_token', $tokenResponse.body.access_token);
-				Cypress.env('refresh_token', $tokenResponse.body.refresh_token);
-			});
-		});
-	});
-});
+				Cypress.env('access_token', $tokenResponse.body.access_token)
+				Cypress.env('refresh_token', $tokenResponse.body.refresh_token)
+			})
+		})
+	})
+})
 
 Cypress.Commands.add('createUserList', (name, privacy) => {
 	cy.request({
@@ -105,10 +105,12 @@ Cypress.Commands.add('createUserList', (name, privacy) => {
 		},
 		failOnStatusCode: false,
 	}).then($response => {
-        expect($response.status).to.be.eq(201);
-        expect($response.body.ids.slug).to.include(name.toLowerCase().replace(/\s+/g, '-'));		
-	});
-});
+		expect($response.status).to.be.eq(201)
+		expect($response.body.ids.slug).to.include(
+			name.toLowerCase().replace(/\s+/g, '-')
+		)
+	})
+})
 
 Cypress.Commands.add('deleteAllLists', () => {
 	cy.request({
@@ -122,13 +124,14 @@ Cypress.Commands.add('deleteAllLists', () => {
 		},
 		failOnStatusCode: false,
 	}).then($userCustomList => {
-		const lists = Cypress.$.makeArray($userCustomList.body);
+		const lists = Cypress.$.makeArray($userCustomList.body)
 
 		lists.forEach($list => {
 			cy.request({
 				method: 'DELETE',
 				url: `https://api.trakt.tv/users/${
-					Cypress.env('user').username}/lists/${$list.ids.slug}`,
+					Cypress.env('user').username
+				}/lists/${$list.ids.slug}`,
 				headers: {
 					'Content-Type': 'application/json',
 					Authorization: `Bearer ${Cypress.env('access_token')}`,
@@ -137,13 +140,13 @@ Cypress.Commands.add('deleteAllLists', () => {
 				},
 				failOnStatusCode: false,
 			}).then($response => {
-				expect($response.status).to.be.gt(200);
-			});
-		});
-	});
-});
+				expect($response.status).to.be.gt(200)
+			})
+		})
+	})
+})
 
-Cypress.Commands.add('deleteAnyActiveCheckins',()=>{
+Cypress.Commands.add('deleteAnyActiveCheckins', () => {
 	cy.request({
 		method: 'DELETE',
 		url: `https://api.trakt.tv/checkin`,
@@ -155,9 +158,9 @@ Cypress.Commands.add('deleteAnyActiveCheckins',()=>{
 		},
 		failOnStatusCode: false,
 	}).then($response => {
-		expect($response.status).to.be.eq(204);
-	});
-});
+		expect($response.status).to.be.eq(204)
+	})
+})
 
 Cypress.Commands.add('addComment', movie => {
 	cy.request({
@@ -172,7 +175,7 @@ Cypress.Commands.add('addComment', movie => {
 		body: {
 			movie: movie,
 			comment: 'I am not the danger!',
-			spoiler: false
+			spoiler: false,
 		},
 		failOnStatusCode: false,
 	}).then($response => {
@@ -180,11 +183,11 @@ Cypress.Commands.add('addComment', movie => {
 		expect($response.body).to.have.property('id')
 
 		const id = $response.body.id
-		return id;
-    });
-});
+		return id
+	})
+})
 
-Cypress.Commands.add('deleteComment',id => {
+Cypress.Commands.add('deleteComment', id => {
 	cy.request({
 		method: 'DELETE',
 		url: `https://api.trakt.tv/comments/${id}`,
@@ -192,14 +195,10 @@ Cypress.Commands.add('deleteComment',id => {
 			'Content-Type': 'application/json',
 			Authorization: `Bearer ${Cypress.env('access_token')}`,
 			'trakt-api-version': Cypress.env('trakt_api_version'),
-		    'trakt-api-key': Cypress.env('client_id'),
+			'trakt-api-key': Cypress.env('client_id'),
 		},
 		failOnStatusCode: false,
-	}).then($response =>{
+	}).then($response => {
 		expect($response.status).to.be.eq(204)
-	});
-});
-
-
-
-
+	})
+})
