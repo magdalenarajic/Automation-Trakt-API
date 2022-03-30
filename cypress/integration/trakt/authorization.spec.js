@@ -1,4 +1,5 @@
 /// <reference types="cypress" />
+
 describe('01: Trakt API Authorization', () => {
 	beforeEach(function () {
 		cy.wrap(Cypress.env('client_id')).as('client_id')
