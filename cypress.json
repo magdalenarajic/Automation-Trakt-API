@@ -2,14 +2,15 @@
   "video": false,
   "defaultCommandTimeout": 7000,
   "waitForAnimations": true,
-  "pageLoadTime": 70000,
+  "responseTimeout": 40000,
+  "pageLoadTimeout": 70000,
   "chromeWebSecurity": false,
   "env": {
     "client_id": "c758d31b1928c51e07b677e05d0d9aad61200426ab76249ade85071e0d511bce",
     "client_secret": "7f54f86a43bc3769c853484a55162339e98675a1549d66652039bdad937f041b",
     "apiBaseUrl": "https://api.trakt.tv",
     "baseUrl": "https://trakt.tv",
-    "trakt_api_version": 2.0,
+    "trakt_api_version": 2,
     "user": {
       "username": "mrajic",
       "password": "mrajic22"

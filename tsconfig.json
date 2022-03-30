@@ -1,5 +1,6 @@
 {
     "compilerOptions": {
+		"experimentalDecorators": true,
         "allowJs": true,
         "outDir": "./built",
         "baseUrl": "../node_modules",
