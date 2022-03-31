@@ -33,7 +33,9 @@ describe('04: Updates, reply and likes on comments.', () => {
 			expect(response.status).to.be.eq(201)
 			expect(response.body).to.have.property('id')
 
-			cy.deleteComment(response.body.id)
+			cy.deleteComment(response.body.id).then(resp => {
+				expect(resp.status).to.be.eq(204)
+			})
 		})
 	})
 
@@ -59,15 +61,13 @@ describe('04: Updates, reply and likes on comments.', () => {
 					'trakt-api-key': Cypress.env('client_id'),
 				},
 				body: {
-					comment: 'That movie is really excited!',
+					comment: 'This movie is really excited!',
 					spoiler: false,
 				},
 				failOnStatusCode: false,
 			}).then(response => {
 				expect(response.status).to.be.eq(200)
 			})
-
-			cy.deleteComment(id)
 		})
 	})
 
@@ -102,6 +102,24 @@ describe('04: Updates, reply and likes on comments.', () => {
 			})
 
 			cy.request({
+				method: 'POST',
+				url: `https://api.trakt.tv/comments/${id}/replies`,
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${Cypress.env('access_token')}`,
+					'trakt-api-version': Cypress.env('trakt_api_version'),
+					'trakt-api-key': Cypress.env('client_id'),
+				},
+				body: {
+					comment: 'I agree with your review.',
+					spoiler: false,
+				},
+				failOnStatusCode: false,
+			}).then(response => {
+				expect(response.status).to.be.eq(201)
+			})
+
+			cy.request({
 				method: 'GET',
 				url: `https://api.trakt.tv/comments/${id}/replies`,
 				headers: {
@@ -113,6 +131,11 @@ describe('04: Updates, reply and likes on comments.', () => {
 				failOnStatusCode: false,
 			}).then(response => {
 				expect(response.status).to.be.eq(200)
+				expect(response.body).to.have.length(2)
+			})
+
+			cy.deleteComment(id).then(resp => {
+				expect(resp.status).to.be.eq(204)
 			})
 		})
 	})
@@ -128,27 +151,20 @@ describe('04: Updates, reply and likes on comments.', () => {
 				tmdb: 118340,
 			},
 		}
-		cy.request({
-			method: 'POST',
-			url: 'https://api.trakt.tv/comments',
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: `Bearer ${Cypress.env('access_token')}`,
-				'trakt-api-version': Cypress.env('trakt_api_version'),
-				'trakt-api-key': Cypress.env('client_id'),
-			},
-			body: {
-				movie: movie,
-				comment: 'I am not the danger!',
-				spoiler: false,
-			},
-			failOnStatusCode: false,
-		}).then(response => {
-			expect(response.status).to.be.eq(201)
-			expect(response.body).to.have.property('id')
-
-			const id = response.body.id
-			cy.deleteComment(id)
+		cy.addComment(movie).then(id => {
+			cy.request({
+				method: 'DELETE',
+				url: `https://api.trakt.tv/comments/${id}`,
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${Cypress.env('access_token')}`,
+					'trakt-api-version': Cypress.env('trakt_api_version'),
+					'trakt-api-key': Cypress.env('client_id'),
+				},
+				failOnStatusCode: false,
+			}).then(response => {
+				expect(response.status).to.be.eq(204)
+			})
 		})
 	})
 
