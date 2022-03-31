@@ -29,11 +29,11 @@ describe('04: Updates, reply and likes on comments.', () => {
 				spoiler: false,
 			},
 			failOnStatusCode: false,
-		}).then($response => {
-			expect($response.status).to.be.eq(201)
-			expect($response.body).to.have.property('id')
+		}).then(response => {
+			expect(response.status).to.be.eq(201)
+			expect(response.body).to.have.property('id')
 
-			cy.deleteComment($response.body.id)
+			cy.deleteComment(response.body.id)
 		})
 	})
 
@@ -97,8 +97,8 @@ describe('04: Updates, reply and likes on comments.', () => {
 					spoiler: false,
 				},
 				failOnStatusCode: false,
-			}).then($response => {
-				expect($response.status).to.be.eq(201)
+			}).then(response => {
+				expect(response.status).to.be.eq(201)
 			})
 
 			cy.request({
@@ -111,8 +111,8 @@ describe('04: Updates, reply and likes on comments.', () => {
 					'trakt-api-key': Cypress.env('client_id'),
 				},
 				failOnStatusCode: false,
-			}).then($response => {
-				expect($response.status).to.be.eq(200)
+			}).then(response => {
+				expect(response.status).to.be.eq(200)
 			})
 		})
 	})
@@ -143,11 +143,11 @@ describe('04: Updates, reply and likes on comments.', () => {
 				spoiler: false,
 			},
 			failOnStatusCode: false,
-		}).then($response => {
-			expect($response.status).to.be.eq(201)
-			expect($response.body).to.have.property('id')
+		}).then(response => {
+			expect(response.status).to.be.eq(201)
+			expect(response.body).to.have.property('id')
 
-			const id = $response.body.id
+			const id = response.body.id
 			cy.deleteComment(id)
 		})
 	})
@@ -174,8 +174,8 @@ describe('04: Updates, reply and likes on comments.', () => {
 					'trakt-api-key': Cypress.env('client_id'),
 				},
 				failOnStatusCode: false,
-			}).then($response => {
-				expect($response.status).to.be.eq(204)
+			}).then(response => {
+				expect(response.status).to.be.eq(204)
 			})
 			cy.request({
 				method: 'DELETE',
@@ -187,8 +187,8 @@ describe('04: Updates, reply and likes on comments.', () => {
 					'trakt-api-key': Cypress.env('client_id'),
 				},
 				failOnStatusCode: false,
-			}).then($response => {
-				expect($response.status).to.be.eq(204)
+			}).then(response => {
+				expect(response.status).to.be.eq(204)
 			})
 		})
 	})

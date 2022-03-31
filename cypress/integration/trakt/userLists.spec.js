@@ -64,7 +64,7 @@ describe('02: Trakt API User list ', () => {
 		it('02_001_005: Should get all user lists', () => {
 			cy.request({
 				method: 'GET',
-				url: `https://api.trakt.tv/users/mrajic/lists`,
+				url: `https://api.trakt.tv/users/${Cypress.env('user').username}/lists`,
 				headers: {
 					'Content-Type': 'application/json',
 					Authorization: `Bearer ${Cypress.env('access_token')}`,
@@ -80,7 +80,7 @@ describe('02: Trakt API User list ', () => {
 		it('02_001_006: Should successfully delete user list', () => {
 			cy.request({
 				method: 'GET',
-				url: `https://api.trakt.tv/users/mrajic/lists`,
+				url: `https://api.trakt.tv/users/${Cypress.env('user').username}/lists`,
 				headers: {
 					'Content-Type': 'application/json',
 					Authorization: `Bearer ${Cypress.env('access_token')}`,
@@ -115,7 +115,7 @@ describe('02: Trakt API User list ', () => {
 		it('02_001_007: Should successfully update one user list', () => {
 			cy.request({
 				method: 'GET',
-				url: `https://api.trakt.tv/users/mrajic/lists`,
+				url: `https://api.trakt.tv/users/${Cypress.env('user').username}/lists`,
 				headers: {
 					'Content-Type': 'application/json',
 					Authorization: `Bearer ${Cypress.env('access_token')}`,
