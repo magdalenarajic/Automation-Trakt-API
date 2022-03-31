@@ -1,7 +1,6 @@
 {
     "compilerOptions": {
 		"experimentalDecorators": true,
-        "allowJs": true,
         "baseUrl": "../node_modules",
         "types": [ "cypress"]
     },
