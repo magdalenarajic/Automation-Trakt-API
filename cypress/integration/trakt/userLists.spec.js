@@ -5,10 +5,38 @@ describe('02: Trakt API User list ', () => {
 			cy.getAccessToken()
 		})
 
-		it.only('02_001_001: Should delete all User Lists', () => {
-			cy.deleteAllLists().then(resp => {
-				expect(resp.status).to.be.eq(200)
-			})
+		it('02_001_001: Should delete all User Lists', () => {
+			cy.request({
+				method: 'GET',
+				url: `https://api.trakt.tv/users/mrajic/lists`,
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${Cypress.env('access_token')}`,
+					'trakt-api-version': Cypress.env('trakt_api_version'),
+					'trakt-api-key': Cypress.env('client_id'),
+				},
+				failOnStatusCode: false,
+			}).then(userCustomList => {
+				const lists = Cypress.$.makeArray(userCustomList.body)
+		
+				lists.forEach(list => {
+					cy.request({
+						method: 'DELETE',
+						url: `https://api.trakt.tv/users/${
+							Cypress.env('user').username
+						}/lists/${list.ids.slug}`,
+						headers: {
+							'Content-Type': 'application/json',
+							Authorization: `Bearer ${Cypress.env('access_token')}`,
+							'trakt-api-version': Cypress.env('trakt_api_version'),
+							'trakt-api-key': Cypress.env('client_id'),
+						},
+						failOnStatusCode: false,
+					}).then(response => {
+						expect(response.status).to.be.eq(204)
+					})
+				})
+			}) 
 		})
 
 		it('02_001_002: Should create private user list and not allow to see for user without authorization', () => {
