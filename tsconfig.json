@@ -2,13 +2,10 @@
     "compilerOptions": {
 		"experimentalDecorators": true,
         "allowJs": true,
-        "outDir": "./built",
         "baseUrl": "../node_modules",
         "types": [ "cypress"]
     },
     "include": [
         "**/*.*"
-    ],
-    "exclude": [
-        "./built/**/*"]
+    ]
 }
