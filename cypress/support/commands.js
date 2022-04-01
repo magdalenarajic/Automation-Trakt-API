@@ -25,7 +25,7 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 Cypress.Commands.add('verifyCode', (code, verificationUrl) => {
-	cy.visit(`https://trakt.tv/auth/signin`)
+	cy.visit('/auth/signin')
 	cy.get('#user_login').type(Cypress.env('user').username)
 	cy.get('#user_password').type(Cypress.env('user').password)
 	cy.contains('Sign in').click()
