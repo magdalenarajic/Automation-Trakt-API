@@ -5,13 +5,13 @@ describe('04: Updates, reply and likes on comments.', () => {
 
 	it('04_001: Should post a comment on movie ', () => {
 		const movie = {
-			title: 'Guardians of the Galaxy',
-			year: 2014,
+			title: 'TRON: Legacy',
+			year: 2010,
 			ids: {
-				trakt: 28,
-				slug: 'guardians-of-the-galaxy-2014',
-				imdb: 'tt2015381',
-				tmdb: 118340,
+				trakt: 1,
+				slug: 'tron-legacy-2010',
+				imdb: 'tt1104001',
+				tmdb: 20526,
 			},
 		}
 		cy.request({
@@ -32,22 +32,18 @@ describe('04: Updates, reply and likes on comments.', () => {
 		}).then(response => {
 			expect(response.status).to.be.eq(201)
 			expect(response.body).to.have.property('id')
-
-			cy.deleteComment(response.body.id).then(resp => {
-				expect(resp.status).to.be.eq(204)
-			})
 		})
 	})
 
 	it('04_002: Should update a comment', () => {
 		const movie = {
-			title: 'Guardians of the Galaxy',
-			year: 2014,
+			title: 'The Dark Knight',
+			year: 2008,
 			ids: {
-				trakt: 28,
-				slug: 'guardians-of-the-galaxy-2014',
-				imdb: 'tt2015381',
-				tmdb: 118340,
+				trakt: 4,
+				slug: 'the-dark-knight-2008',
+				imdb: 'tt0468569',
+				tmdb: 155,
 			},
 		}
 		cy.addComment(movie).then(id => {
@@ -133,22 +129,18 @@ describe('04: Updates, reply and likes on comments.', () => {
 				expect(response.status).to.be.eq(200)
 				expect(response.body).to.have.length(2)
 			})
-
-			cy.deleteComment(id).then(resp => {
-				expect(resp.status).to.be.eq(204)
-			})
 		})
 	})
 
 	it('04_004: Should delete a comment or reply ', () => {
 		const movie = {
-			title: 'Guardians of the Galaxy',
-			year: 2014,
+			title: 'The Shawshank Redemption',
+			year: 1994,
 			ids: {
-				trakt: 28,
-				slug: 'guardians-of-the-galaxy-2014',
-				imdb: 'tt2015381',
-				tmdb: 118340,
+				trakt: 231,
+				slug: 'the-shawshank-redemption-1994',
+				imdb: 'tt0111161',
+				tmdb: 278,
 			},
 		}
 		cy.addComment(movie).then(id => {
@@ -170,13 +162,13 @@ describe('04: Updates, reply and likes on comments.', () => {
 
 	it('04_005: Should like a comment and after that remove like', () => {
 		const movie = {
-			title: 'Guardians of the Galaxy',
-			year: 2014,
+			title: 'The Matrix',
+			year: 1999,
 			ids: {
-				trakt: 28,
-				slug: 'guardians-of-the-galaxy-2014',
-				imdb: 'tt2015381',
-				tmdb: 118340,
+				trakt: 269,
+				slug: 'the-matrix-1999',
+				imdb: 'tt0133093',
+				tmdb: 603,
 			},
 		}
 		cy.addComment(movie).then(id => {
