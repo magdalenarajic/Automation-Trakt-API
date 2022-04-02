@@ -127,7 +127,7 @@ Cypress.Commands.add('addComment', movie => {
 		},
 		body: {
 			movie: movie,
-			comment: 'I am not the danger!',
+			comment: 'I like this movie so much!',
 			spoiler: false,
 		},
 		failOnStatusCode: false,
@@ -136,21 +136,3 @@ Cypress.Commands.add('addComment', movie => {
 		return id
 	})
 })
-
-Cypress.Commands.add('deleteComment', id => {
-	cy.request({
-		method: 'DELETE',
-		url: `https://api.trakt.tv/comments/${id}`,
-		headers: {
-			'Content-Type': 'application/json',
-			Authorization: `Bearer ${Cypress.env('access_token')}`,
-			'trakt-api-version': Cypress.env('trakt_api_version'),
-			'trakt-api-key': Cypress.env('client_id'),
-		},
-		failOnStatusCode: false,
-	}).then(response => {
-		const resp = response
-		cy.wrap(resp)
-	})
-})
-
