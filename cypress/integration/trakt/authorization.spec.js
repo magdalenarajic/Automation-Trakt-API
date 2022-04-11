@@ -88,3 +88,4 @@ describe('01: Trakt API Authorization', () => {
 		})
 	})
 })
+
