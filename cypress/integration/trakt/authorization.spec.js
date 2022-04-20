@@ -18,17 +18,17 @@ describe('01: Trakt API Authorization', () => {
 				body: {
 					client_id: Cypress.env('client_id'),
 				},
-			}).then($response => {
-				expect($response.status).to.be.eq(200)
-				expect($response.body).to.have.property('device_code')
-				expect($response.body).to.have.property('user_code')
-				expect($response.body).to.have.property('verification_url')
-				expect($response.body).to.have.property('expires_in')
-				expect($response.body).to.have.property('interval')
+			}).then(response => {
+				expect(response.status).to.be.eq(200)
+				expect(response.body).to.have.property('device_code')
+				expect(response.body).to.have.property('user_code')
+				expect(response.body).to.have.property('verification_url')
+				expect(response.body).to.have.property('expires_in')
+				expect(response.body).to.have.property('interval')
 
 				cy.verifyCode(
-					$response.body.user_code,
-					$response.body.verification_url
+					response.body.user_code,
+					response.body.verification_url
 				).then(() => {
 					cy.request({
 						method: 'POST',
@@ -37,15 +37,15 @@ describe('01: Trakt API Authorization', () => {
 							'Content-Type': 'application/json',
 						},
 						body: {
-							code: $response.body.device_code,
+							code: response.body.device_code,
 							client_id: this.client_id,
 							client_secret: this.client_secret,
 						},
-					}).then($tokenResponse => {
-						console.log($tokenResponse.body)
-						expect($tokenResponse.status).to.be.eq(200)
-						expect($tokenResponse.body).to.have.property('access_token')
-						expect($tokenResponse.body).to.have.property('refresh_token')
+					}).then(tokenResponse => {
+						console.log(tokenResponse.body)
+						expect(tokenResponse.status).to.be.eq(200)
+						expect(tokenResponse.body).to.have.property('access_token')
+						expect(tokenResponse.body).to.have.property('refresh_token')
 					})
 				})
 			})
@@ -61,13 +61,13 @@ describe('01: Trakt API Authorization', () => {
 				body: {
 					client_id: Cypress.env('client_id'),
 				},
-			}).then($response => {
-				expect($response.status).to.be.eq(200)
-				expect($response.body).to.have.property('user_code')
-				expect($response.body).to.have.property('device_code')
-				expect($response.body).to.have.property('verification_url')
-				expect($response.body).to.have.property('expires_in')
-				expect($response.body).to.have.property('interval')
+			}).then(response => {
+				expect(response.status).to.be.eq(200)
+				expect(response.body).to.have.property('user_code')
+				expect(response.body).to.have.property('device_code')
+				expect(response.body).to.have.property('verification_url')
+				expect(response.body).to.have.property('expires_in')
+				expect(response.body).to.have.property('interval')
 
 				cy.request({
 					method: 'POST',
@@ -76,15 +76,16 @@ describe('01: Trakt API Authorization', () => {
 						'Content-Type': 'application/json',
 					},
 					body: {
-						code: $response.body.device_code,
+						code: response.body.device_code,
 						client_id: this.client_id,
 						client_secret: this.client_secret,
 					},
 					failOnStatusCode: false,
-				}).then($tokenResponse => {
-					expect($tokenResponse.status).to.be.eq(400)
+				}).then(tokenResponse => {
+					expect(tokenResponse.status).to.be.eq(400)
 				})
 			})
 		})
 	})
 })
+
